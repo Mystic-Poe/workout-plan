@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Workout Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAF6F1;
+    --card: #FFFFFF;
+    --accent: #C4785B;
+    --accent-light: #E8C4B4;
+    --accent-glow: #F5DDD1;
+    --text: #2D2A26;
+    --text-soft: #6B6560;
+    --text-muted: #A39E98;
+    --border: #E8E2DA;
+    --success: #6B9E78;
+    --success-bg: #E8F3EB;
+    --warm-white: #FFFDF9;
+    --shadow: 0 2px 16px rgba(45,42,38,0.06);
+    --shadow-lg: 0 8px 40px rgba(45,42,38,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- HEADER --- */
+  .hero {
+    text-align: center;
+    padding: 56px 24px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 7vw, 52px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .hero p {
+    font-size: 15px;
+    color: var(--text-soft);
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* --- DAY TABS --- */
+  .tabs-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    padding: 12px 24px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tabs {
+    display: flex;
+    max-width: 560px;
+    margin: 0 auto;
+    gap: 4px;
+  }
+  .tab {
+    flex: 1;
+    padding: 14px 8px 16px;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.25s;
+    text-align: center;
+  }
+  .tab::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 16%; right: 16%;
+    height: 2.5px;
+    background: var(--accent);
+    border-radius: 2px 2px 0 0;
+    transform: scaleX(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tab.active { color: var(--accent); font-weight: 600; }
+  .tab.active::after { transform: scaleX(1); }
+  .tab .tab-sub {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-top: 2px;
+    letter-spacing: 0.3px;
+  }
+  .tab.active .tab-sub { color: var(--accent-light); }
+
+  /* --- CONTENT --- */
+  .content {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 24px 20px 100px;
+  }
+
+  .day-panel { display: none; }
+  .day-panel.active { display: block; animation: fadeUp 0.35s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SECTION BLOCKS --- */
+  .section {
+    margin-bottom: 28px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .section-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .section-icon.warmup { background: #FFF3E0; }
+  .section-icon.work { background: #FDEAE3; }
+  .section-icon.burnout { background: #FCE4EC; }
+  .section-icon.cool { background: #E0F2F1; }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    flex: 1;
+  }
+  .section-time {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .section-chevron {
+    font-size: 14px;
+    color: var(--text-muted);
+    transition: transform 0.3s;
+  }
+  .section.collapsed .section-chevron { transform: rotate(-90deg); }
+  .section-body { overflow: hidden; transition: max-height 0.35s ease; }
+  .section.collapsed .section-body { max-height: 0 !important; }
+
+  /* --- SUPERSET CARD --- */
+  .superset {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .superset-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  /* --- EXERCISE ROW --- */
+  .exercise {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    transition: opacity 0.2s;
+  }
+  .exercise + .exercise {
+    border-top: 1px solid var(--border);
+  }
+  .exercise-check {
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    margin-top: 1px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .exercise-check:hover { border-color: var(--accent); }
+  .exercise-check.done {
+    background: var(--success);
+    border-color: var(--success);
+  }
+  .exercise-check.done::after {
+    content: '✓';
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .exercise.completed .exercise-info { opacity: 0.4; }
+  .exercise-info { flex: 1; }
+  .exercise-name {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .exercise-detail {
+    font-size: 12.5px;
+    color: var(--text-soft);
+    margin-top: 1px;
+  }
+  .exercise-note {
+    font-size: 11.5px;
+    color: var(--accent);
+    font-style: italic;
+    margin-top: 3px;
+  }
+
+  /* --- SIMPLE LIST (warmup/cooldown) --- */
+  .simple-list .exercise {
+    padding: 6px 0;
+  }
+  .simple-list .exercise + .exercise {
+    border-top: 1px dashed var(--border);
+  }
+
+  /* --- REST BADGE --- */
+  .rest-note {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 6px 0;
+    font-style: italic;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .progress-bar-wrapper {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--warm-white);
+    border-top: 1px solid var(--border);
+    padding: 14px 24px calc(14px + env(safe-area-inset-bottom));
+    z-index: 100;
+  }
+  .progress-inner {
+    max-width: 560px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--success));
+    border-radius: 3px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+  .progress-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-soft);
+    min-width: 42px;
+    text-align: right;
+  }
+  .reset-btn {
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { background: var(--border); color: var(--text-soft); }
+
+  /* --- PROGRESSION TIPS --- */
+  .tips-section {
+    margin-top: 12px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--accent-glow), var(--warm-white));
+    border-radius: 14px;
+    border: 1px solid var(--accent-light);
+  }
+  .tips-section h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--accent);
+  }
+  .tips-section p {
+    font-size: 13.5px;
+    color: var(--text-soft);
+    line-height: 1.65;
+  }
+
+  /* --- UTILITIES --- */
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+  /* --- CONFETTI --- */
+  .confetti-container {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute;
+    top: -20px;
+    opacity: 0;
+    animation: confettiFall ease-out forwards;
+  }
+  @keyframes confettiFall {
+    0% {
+      opacity: 1;
+      transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+    }
+    20% { opacity: 1; }
+    100% {
+      opacity: 0;
+      transform: translateY(105vh) translateX(var(--drift)) rotate(var(--spin)) scale(0.4);
+    }
+  }
+
+  /* --- PARTY BANNER --- */
+  .party-banner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.3);
+    background: linear-gradient(135deg, #C4785B, #E8C4B4, #6B9E78);
+    color: white;
+    font-family: 'Fraunces', serif;
+    font-size: clamp(18px, 5vw, 28px);
+    font-weight: 700;
+    padding: 20px 36px;
+    border-radius: 20px;
+    z-index: 10000;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 12px 60px rgba(196,120,91,0.4);
+    animation: bannerIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    pointer-events: none;
+  }
+  .party-banner-out {
+    animation: bannerOut 0.5s ease-in forwards !important;
+  }
+  .party-emoji {
+    display: inline-block;
+    animation: emojiPulse 0.6s ease infinite alternate;
+  }
+  .party-emoji:last-child { animation-delay: 0.3s; }
+
+  @keyframes bannerIn {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  @keyframes bannerOut {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) translateY(-30px); }
+  }
+  @keyframes emojiPulse {
+    from { transform: scale(1) rotate(-5deg); }
+    to { transform: scale(1.2) rotate(5deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">3 Days / Week · 60 Min</div>
+  <h1>Your Workout<br>Plan</h1>
+  <p>Bodyweight only. Legs & glutes focus with full-body tone. Tap exercises to check them off as you go.</p>
+</div>
+
+<div class="tabs-wrapper">
+  <div class="tabs">
+    <button class="tab active" data-day="a" onclick="switchDay('a')">
+      Day A
+      <span class="tab-sub">Lower Body</span>
+    </button>
+    <button class="tab" data-day="b" onclick="switchDay('b')">
+      Day B
+      <span class="tab-sub">Upper + Core</span>
+    </button>
+    <button class="tab" data-day="c" onclick="switchDay('c')">
+      Day C
+      <span class="tab-sub">Full Body</span>
+    </button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ======================== DAY A ======================== -->
+<div class="day-panel active" id="day-a">
+
+  <div class="section" id="a-warmup">
+    <div class="section-header" onclick="toggleSection('a-warmup')">
+      <div class="section-icon warmup">🔥</div>
+      <div class="section-title">Warm-Up</div>
+      <div class="section-time">8 min</div>
+      <div class="section-chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="superset simple-list">
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Jumping Jacks</div><div class="exercise-detail">2 minutes</div></div></div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Leg Swings — Front/Back</div><div class="exercise-detail">30 sec each leg</div></div></div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Leg Swings — Side to Side</div><div class="exercise-detail">30 sec each leg</div></div></div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Bodyweight Good Mornings</div><div class="exercise-detail">10 reps</div></div></div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Deep Squat Hold</div><div class="exercise-detail">30 sec × 2</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="a-main">
+    <div class="section-header" onclick="toggleSection('a-main')">
+      <div class="section-icon work">💪</div>
+      <div class="section-title">Main Work</div>
+      <div class="section-time">40 min</div>
+      <div class="section-chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="rest-note">3 rounds each superset · 60 sec rest between rounds</div>
+
+      <div class="superset">
+        <div class="superset-label">Superset 1</div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Bodyweight Squats</div><div class="exercise-detail">15 reps</div></div></div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Glute Bridges</div><div class="exercise-detail">15 reps</div><div class="exercise-note">3 sec hold at top</div></div></div>
+      </div>
+
+      <div class="superset">
+        <div class="superset-label">Superset 2</div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Reverse Lunges</div><div class="exercise-detail">12 each leg</div></div></div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Single-Leg Glute Bridge</div><div class="exercise-detail">10 each leg</div></div></div>
+      </div>
+
+      <div class="superset">
+        <div class="superset-label">Superset 3</div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Sumo Squats</div><div class="exercise-detail">15 reps</div><div class="exercise-note">Wide stance, toes out</div></div></div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Donkey Kicks</div><div class="exercise-detail">15 each leg</div></div></div>
+      </div>
+
+      <div class="superset">
+        <div class="superset-label">Superset 4</div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Wall Sit</div><div class="exercise-detail">45 seconds</div></div></div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Fire Hydrants</div><div class="exercise-detail">15 each leg</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="a-burnout">
+    <div class="section-header" onclick="toggleSection('a-burnout')">
+      <div class="section-icon burnout">🔥</div>
+      <div class="section-title">Burnout</div>
+      <div class="section-time">5 min</div>
+      <div class="section-chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="superset simple-list">
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Squat Pulses</div><div class="exercise-detail">30 sec on / 15 sec off × 4</div><div class="exercise-note">Hold at the bottom, pulse small</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="a-cool">
+    <div class="section-header" onclick="toggleSection('a-cool')">
+      <div class="section-icon cool">🧘</div>
+      <div class="section-title">Cool-Down</div>
+      <div class="section-time">7 min</div>
+      <div class="section-chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="superset simple-list">
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Pigeon Pose</div><div class="exercise-detail">60 sec each side</div></div></div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Seated Forward Fold</div><div class="exercise-detail">60 sec</div></div></div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Figure-Four Stretch</div><div class="exercise-detail">45 sec each side</div></div></div>
+        <div class="exercise" data-day="a"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Quad Stretch</div><div class="exercise-detail">45 sec each leg</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== DAY B ======================== -->
+<div class="day-panel" id="day-b">
+
+  <div class="section" id="b-warmup">
+    <div class="section-header" onclick="toggleSection('b-warmup')">
+      <div class="section-icon warmup">🔥</div>
+      <div class="section-title">Warm-Up</div>
+      <div class="section-time">8 min</div>
+      <div class="section-chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="superset simple-list">
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Arm Circles</div><div class="exercise-detail">1 minute</div></div></div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Inchworms</div><div class="exercise-detail">6 reps</div></div></div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Cat-Cow</div><div class="exercise-detail">10 reps</div></div></div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Glute Bridge March</div><div class="exercise-detail">10 each leg</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="b-main">
+    <div class="section-header" onclick="toggleSection('b-main')">
+      <div class="section-icon work">💪</div>
+      <div class="section-title">Main Work</div>
+      <div class="section-time">40 min</div>
+      <div class="section-chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="rest-note">3 rounds each superset · 60 sec rest between rounds</div>
+
+      <div class="superset">
+        <div class="superset-label">Superset 1</div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Push-Ups</div><div class="exercise-detail">8–12 reps</div><div class="exercise-note">Start on knees, progress to full</div></div></div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Plank</div><div class="exercise-detail">30–45 seconds</div></div></div>
+      </div>
+
+      <div class="superset">
+        <div class="superset-label">Superset 2</div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Diamond Push-Ups</div><div class="exercise-detail">8 reps</div><div class="exercise-note">Knees okay</div></div></div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Superman Hold</div><div class="exercise-detail">20 sec × 3</div></div></div>
+      </div>
+
+      <div class="superset">
+        <div class="superset-label">Superset 3</div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Tricep Dips (Floor)</div><div class="exercise-detail">12 reps</div><div class="exercise-note">Fingers forward, hips up</div></div></div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Dead Bugs</div><div class="exercise-detail">10 each side</div></div></div>
+      </div>
+
+      <div class="superset">
+        <div class="superset-label">Superset 4</div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Glute Bridges</div><div class="exercise-detail">15 reps</div></div></div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Bicycle Crunches</div><div class="exercise-detail">15 each side</div></div></div>
+      </div>
+
+      <div class="superset">
+        <div class="superset-label">Finisher</div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Plank Shoulder Taps</div><div class="exercise-detail">3 × 20 (10 each side)</div></div></div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Lying Leg Raises</div><div class="exercise-detail">3 × 12</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="b-cool">
+    <div class="section-header" onclick="toggleSection('b-cool')">
+      <div class="section-icon cool">🧘</div>
+      <div class="section-title">Cool-Down</div>
+      <div class="section-time">7 min</div>
+      <div class="section-chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="superset simple-list">
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Child's Pose</div><div class="exercise-detail">60 sec</div></div></div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Thread the Needle</div><div class="exercise-detail">45 sec each side</div></div></div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Chest Opener Stretch</div><div class="exercise-detail">45 sec each side</div><div class="exercise-note">Lying face down, arm extended out</div></div></div>
+        <div class="exercise" data-day="b"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Hip Flexor Stretch</div><div class="exercise-detail">45 sec each side</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== DAY C ======================== -->
+<div class="day-panel" id="day-c">
+
+  <div class="section" id="c-warmup">
+    <div class="section-header" onclick="toggleSection('c-warmup')">
+      <div class="section-icon warmup">🔥</div>
+      <div class="section-title">Warm-Up</div>
+      <div class="section-time">8 min</div>
+      <div class="section-chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="superset simple-list">
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">High Knees</div><div class="exercise-detail">1 minute</div></div></div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Bodyweight Good Mornings</div><div class="exercise-detail">10 reps</div></div></div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Lateral Leg Swings</div><div class="exercise-detail">30 sec each leg</div></div></div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Frog Pumps</div><div class="exercise-detail">15 reps</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="c-main">
+    <div class="section-header" onclick="toggleSection('c-main')">
+      <div class="section-icon work">💪</div>
+      <div class="section-title">Main Work</div>
+      <div class="section-time">40 min</div>
+      <div class="section-chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="rest-note">3 rounds each block · 60 sec rest between rounds</div>
+
+      <div class="superset">
+        <div class="superset-label">Block 1</div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Bulgarian Split Squats</div><div class="exercise-detail">10 each leg</div><div class="exercise-note">Rear foot on a couch or chair</div></div></div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Push-Ups</div><div class="exercise-detail">10 reps</div></div></div>
+      </div>
+
+      <div class="superset">
+        <div class="superset-label">Block 2</div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Curtsy Lunges</div><div class="exercise-detail">12 each leg</div></div></div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Plank to Downward Dog</div><div class="exercise-detail">10 reps</div></div></div>
+      </div>
+
+      <div class="superset">
+        <div class="superset-label">Block 3</div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Single-Leg Romanian Deadlift</div><div class="exercise-detail">10 each leg</div><div class="exercise-note">Slow and controlled</div></div></div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Calf Raises</div><div class="exercise-detail">20 reps</div><div class="exercise-note">3 sec up / 3 sec down</div></div></div>
+      </div>
+
+      <div class="superset">
+        <div class="superset-label">Block 4</div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Hip Thrust</div><div class="exercise-detail">15 reps</div><div class="exercise-note">Shoulders on couch edge, 3 sec hold at top</div></div></div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Side-Lying Leg Raises</div><div class="exercise-detail">15 each side</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="c-burnout">
+    <div class="section-header" onclick="toggleSection('c-burnout')">
+      <div class="section-icon burnout">🔥</div>
+      <div class="section-title">Burnout</div>
+      <div class="section-time">5 min</div>
+      <div class="section-chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="superset simple-list">
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Alternating Lunges</div><div class="exercise-detail">30 sec on / 15 sec off × 4</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="c-cool">
+    <div class="section-header" onclick="toggleSection('c-cool')">
+      <div class="section-icon cool">🧘</div>
+      <div class="section-title">Cool-Down</div>
+      <div class="section-time">7 min</div>
+      <div class="section-chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="superset simple-list">
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Pigeon Pose</div><div class="exercise-detail">60 sec each side</div></div></div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Standing Quad Stretch</div><div class="exercise-detail">45 sec each leg</div></div></div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Hamstring Stretch</div><div class="exercise-detail">60 sec each leg</div><div class="exercise-note">Lying down, leg straight up</div></div></div>
+        <div class="exercise" data-day="c"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Deep Squat Hold</div><div class="exercise-detail">45 seconds</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tips-section">
+    <h3>Progression Tips</h3>
+    <p>The key to building muscle with bodyweight is <strong>progressive overload</strong> — add reps, slow down tempo (4 sec down on squats, 3 sec pause on bridges), or reduce rest every 1–2 weeks. When 15 reps feels easy, level up: squats → pause squats → single-leg assisted; glute bridges → single-leg → hip thrusts elevated; knee push-ups → full → decline.</p>
+  </div>
+</div>
+
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-wrapper">
+  <div class="progress-inner">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-text" id="progressText">0%</div>
+    <button class="reset-btn" onclick="resetDay()">Reset</button>
+  </div>
+</div>
+
+<script>
+  let currentDay = 'a';
+  let celebrated = { a: false, b: false, c: false };
+
+  function switchDay(day) {
+    currentDay = day;
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.day === day));
+    document.querySelectorAll('.day-panel').forEach(p => p.classList.toggle('active', p.id === 'day-' + day));
+    // Recalc section heights after panel is visible
+    requestAnimationFrame(() => {
+      const panel = document.getElementById('day-' + day);
+      panel.querySelectorAll('.section-body').forEach(body => {
+        if (!body.closest('.section').classList.contains('collapsed')) {
+          body.style.maxHeight = body.scrollHeight + 'px';
+        }
+      });
+    });
+    updateProgress();
+  }
+
+  function toggleSection(id) {
+    const section = document.getElementById(id);
+    const body = section.querySelector('.section-body');
+    if (section.classList.contains('collapsed')) {
+      section.classList.remove('collapsed');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    } else {
+      body.style.maxHeight = body.scrollHeight + 'px';
+      requestAnimationFrame(() => {
+        body.style.maxHeight = '0px';
+        section.classList.add('collapsed');
+      });
+    }
+  }
+
+  function toggleCheck(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    const check = e.currentTarget;
+    const exercise = check.closest('.exercise');
+    check.classList.toggle('done');
+    exercise.classList.toggle('completed');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const panel = document.getElementById('day-' + currentDay);
+    const total = panel.querySelectorAll('.exercise-check').length;
+    const done = panel.querySelectorAll('.exercise-check.done').length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = pct + '%';
+
+    if (pct === 100 && !celebrated[currentDay]) {
+      celebrated[currentDay] = true;
+      launchParty();
+    }
+    if (pct < 100) {
+      celebrated[currentDay] = false;
+    }
+  }
+
+  function resetDay() {
+    const panel = document.getElementById('day-' + currentDay);
+    panel.querySelectorAll('.exercise-check.done').forEach(c => {
+      c.classList.remove('done');
+      c.closest('.exercise').classList.remove('completed');
+    });
+    celebrated[currentDay] = false;
+    updateProgress();
+  }
+
+  /* ====== PARTY EFFECT ====== */
+  function launchParty() {
+    const confettiCount = 150;
+    const colors = ['#C4785B','#E8C4B4','#6B9E78','#F5DDD1','#FFD700','#FF6B8A','#8B5CF6','#34D399','#FB923C','#F472B6'];
+    const shapes = ['circle','square','strip'];
+    const container = document.createElement('div');
+    container.className = 'confetti-container';
+    document.body.appendChild(container);
+
+    for (let i = 0; i < confettiCount; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      const shape = shapes[Math.floor(Math.random() * shapes.length)];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const left = Math.random() * 100;
+      const delay = Math.random() * 0.6;
+      const duration = 2.2 + Math.random() * 1.8;
+      const drift = (Math.random() - 0.5) * 200;
+      const spin = Math.random() * 720 - 360;
+      const size = (6 + Math.random() * 6) + 'px';
+      const h = shape === 'strip' ? (12 + Math.random() * 10) + 'px' : size;
+      const w = shape === 'strip' ? (4 + Math.random() * 4) + 'px' : size;
+      const br = shape === 'circle' ? '50%' : shape === 'strip' ? '2px' : '1px';
+
+      piece.style.left = left + '%';
+      piece.style.background = color;
+      piece.style.width = w;
+      piece.style.height = h;
+      piece.style.borderRadius = br;
+      piece.style.animationDelay = delay + 's';
+      piece.style.animationDuration = duration + 's';
+      piece.style.setProperty('--drift', drift + 'px');
+      piece.style.setProperty('--spin', spin + 'deg');
+      container.appendChild(piece);
+    }
+
+    const banner = document.createElement('div');
+    banner.className = 'party-banner';
+    banner.innerHTML = '<span class="party-emoji">\u{1F389}</span> WORKOUT COMPLETE! <span class="party-emoji">\u{1F4AA}</span>';
+    document.body.appendChild(banner);
+
+    setTimeout(() => {
+      banner.classList.add('party-banner-out');
+      setTimeout(() => banner.remove(), 500);
+    }, 3500);
+    setTimeout(() => container.remove(), 5000);
+  }
+
+  // Init section heights for Day A on load
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('day-a').querySelectorAll('.section-body').forEach(body => {
+      body.style.maxHeight = body.scrollHeight + 'px';
+    });
+  });
+</script>
+
+</body>
+</html>
