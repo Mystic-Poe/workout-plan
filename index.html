@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Workout Plan</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Our Workout Plans</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Rubik+Glitch&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #FAF6F1;
@@ -415,9 +415,79 @@
     from { transform: scale(1) rotate(-5deg); }
     to { transform: scale(1.2) rotate(5deg); }
   }
+
+  /* ===== PERSON SWITCHER ===== */
+  .person-switch { display:flex; gap:10px; max-width:560px; margin:0 auto; padding:22px 20px 0; }
+  .person-btn { flex:1; padding:16px 10px; border-radius:14px; cursor:pointer; font-size:17px; letter-spacing:2.5px; text-transform:uppercase; transition:all .25s ease; border:2px solid transparent; background:transparent; }
+  .person-btn small { display:block; font-size:10px; letter-spacing:1.5px; text-transform:none; margin-top:3px; opacity:.75; font-weight:400; }
+  .person-btn[data-p="alivia"] { font-family:'Fraunces',serif; background:#FFFDF9; color:#2D2A26; border-color:#E8E2DA; }
+  .person-btn[data-p="gabriel"] { font-family:'JetBrains Mono',monospace; background:#0A0A0B; color:#E8E6E1; border-color:#222; }
+  body[data-person="alivia"] .person-btn[data-p="alivia"] { border-color:#C4785B; box-shadow:0 4px 20px rgba(196,120,91,.25); }
+  body[data-person="gabriel"] .person-btn[data-p="gabriel"] { border-color:#35C4FF; box-shadow:0 0 22px rgba(53,196,255,.35); color:#BFF3FF; }
+  .person-panel { display:none; }
+  .person-panel.active { display:block; animation:fadeUp .35s ease; }
+
+  /* ===== GABRIEL THEME (dark / electric) ===== */
+  body[data-person="gabriel"] { --bg:#0A0A0B; --card:#111113; --text:#E8E6E1; --text-soft:#999; --text-muted:#666; --border:#1E1E20; --accent:#35C4FF; --accent-light:#7FDCFF; --accent-glow:rgba(53,196,255,.25); --success:#35C4FF; --success-bg:#0D2231; --warm-white:#111113; --shadow:0 2px 16px rgba(0,0,0,.5); --shadow-lg:0 8px 40px rgba(0,0,0,.6); }
+  body[data-person="gabriel"] { background:#0A0A0B; }
+  #person-gabriel { font-family:'JetBrains Mono','SF Mono','Fira Code',monospace; }
+  .g-wrap { max-width:720px; margin:0 auto; padding:8px 4px 8px; }
+  .g-hero { text-align:left; padding:28px 8px 4px; }
+  .g-label { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:#666; margin-bottom:8px; }
+  .g-title { font-size:27px; font-weight:700; line-height:1.2; color:#fff; font-family:'JetBrains Mono',monospace; }
+  .g-sub { font-size:12px; color:#777; margin-top:8px; line-height:1.6; }
+  .g-morning-btn { width:100%; background:transparent; border:1px solid #222; border-radius:8px; padding:14px 16px; color:#E8E6E1; font-size:13px; font-family:inherit; cursor:pointer; text-align:left; margin:22px 0 14px; display:flex; justify-content:space-between; align-items:center; }
+  .g-morning-btn.open { background:#1A1A1C; }
+  .g-morning-btn .g-arrow { font-size:10px; transition:transform .2s ease; }
+  .g-morning-btn.open .g-arrow { transform:rotate(180deg); }
+  .g-sun { color:#F5C542; margin-right:8px; }
+  .g-morning-panel { background:#111113; border:1px solid #1A1A1C; border-radius:8px; padding:16px; margin-bottom:16px; display:none; }
+  .g-morning-panel.show { display:block; }
+  .g-morning-sub { font-size:11px; color:#F5C542; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; }
+  .g-phase { font-size:13px; font-weight:600; color:#ccc; margin:14px 0 4px; }
+  .g-phase-item { font-size:12px !important; color:#999 !important; font-weight:400 !important; }
+  .g-morning-ex { background:transparent !important; border:none !important; padding:5px 2px !important; }
+  .g-focus { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; margin:4px 0 16px; padding-bottom:12px; }
+  .g-sets { font-size:12px; font-weight:700; white-space:nowrap; color:var(--dayc); margin-left:auto; padding-left:10px; }
+  #person-gabriel .section { background:#111113; border:1px solid #1A1A1C; box-shadow:none; }
+  #person-gabriel .section-title { color:#fff; font-family:'JetBrains Mono',monospace; font-size:14px; }
+  #person-gabriel .section-chevron { color:#555; }
+  #person-gabriel .exercise { background:transparent; }
+  #person-gabriel .exercise-name { color:#ddd; font-size:13px; }
+  #person-gabriel .exercise-note { color:#777; }
+  #person-gabriel .exercise-check { border-color:#333; background:transparent; }
+  #person-gabriel .exercise-check.done { background:var(--dayc,#35C4FF); border-color:var(--dayc,#35C4FF); }
+  #person-gabriel .tab { color:#888; font-family:'JetBrains Mono',monospace; }
+  #person-gabriel .tab.active { color:var(--dayc,#35C4FF); }
+  #person-gabriel .tab.active .tab-sub { color:#aaa; }
+  .g-sauna { padding:14px 16px; background:#1A1008; border:1px solid #332810; border-radius:8px; margin:20px 0 12px; }
+  .g-sauna-title { font-size:12px; color:#D4A03C; font-weight:600; margin-bottom:4px; }
+  .g-sauna-note { font-size:11px; color:#8B7A4A; line-height:1.5; }
+  .g-bjj { padding:14px 16px; background:#0D1117; border:1px solid #1A2332; border-radius:8px; margin-bottom:14px; }
+  .g-bjj-title { font-size:12px; color:#5A9FD4; font-weight:600; margin-bottom:4px; }
+  .g-bjj-note { font-size:11px; color:#4A6A84; line-height:1.5; }
+  .g-philosophy { padding:16px 4px 26px; border-top:1px solid #1A1A1C; font-size:11px; color:#555; line-height:1.7; }
+  .g-philosophy strong { color:#888; }
+
+  /* ===== LIGHTNING COMPLETE ===== */
+  .lightning-overlay { position:fixed; inset:0; z-index:2000; background:rgba(2,6,16,0); opacity:0; pointer-events:none; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .lightning-overlay.show { opacity:1; pointer-events:auto; animation:overlayFlash 3.8s ease forwards; }
+  @keyframes overlayFlash { 0%{background:rgba(2,6,16,0);} 4%{background:rgba(10,30,60,.88);} 8%{background:rgba(2,6,16,.55);} 12%{background:rgba(10,30,60,.9);} 20%{background:rgba(3,8,20,.92);} 85%{background:rgba(3,8,20,.92);} 100%{background:rgba(3,8,20,0);} }
+  .bolt-svg { position:absolute; inset:0; width:100%; height:100%; }
+  .bolt-svg polyline { fill:none; stroke:#8FEAFF; stroke-width:3; stroke-linejoin:round; stroke-linecap:round; filter:drop-shadow(0 0 6px #35C4FF) drop-shadow(0 0 18px #0090FF); stroke-dasharray:1200; stroke-dashoffset:1200; opacity:0; }
+  .lightning-overlay.show .bolt-svg polyline { animation:boltStrike .7s steps(6) forwards; }
+  .lightning-overlay.show .b2 polyline { animation-delay:.18s; }
+  .lightning-overlay.show .b3 polyline { animation-delay:.42s; }
+  @keyframes boltStrike { 0%{stroke-dashoffset:1200; opacity:0;} 15%{opacity:1;} 45%{stroke-dashoffset:0; opacity:1;} 60%{opacity:.25;} 75%{opacity:1;} 100%{stroke-dashoffset:0; opacity:.9;} }
+  .complete-text { position:relative; font-family:'Rubik Glitch',monospace; font-size:clamp(44px,13vw,120px); letter-spacing:4px; color:#D8F7FF; text-shadow:0 0 8px #35C4FF,0 0 26px #0090FF,0 0 60px #0066FF,3px 3px 0 #003a66; transform:skewX(-6deg) rotate(-1.5deg); opacity:0; }
+  .lightning-overlay.show .complete-text { animation:textFlicker 3.8s linear forwards; }
+  @keyframes textFlicker { 0%{opacity:0;} 10%{opacity:0;} 14%{opacity:1;} 17%{opacity:.2;} 20%{opacity:1;} 24%{opacity:.4;} 28%{opacity:1;} 80%{opacity:1;} 92%{opacity:.85;} 100%{opacity:0;} }
 </style>
 </head>
-<body>
+<body data-person="alivia">
+<div class="person-switch"><button class="person-btn active" data-p="alivia" onclick="switchPerson('alivia')">Alivia<small>Bodyweight · Legs &amp; Glutes</small></button><button class="person-btn" data-p="gabriel" onclick="switchPerson('gabriel')">Gabriel<small>Powerhouse Protocol</small></button></div>
+<div class="person-panel active" id="person-alivia">
+
 
 <div class="hero">
   <div class="hero-label">3 Days / Week · 60 Min</div>
@@ -708,6 +778,133 @@
 
 </div>
 
+
+</div>
+<div class="person-panel" id="person-gabriel">
+<div class="g-wrap">
+<div class="g-hero"><div class="g-label">Calisthenics Program</div><h1 class="g-title">Powerhouse Protocol</h1><p class="g-sub">Tue / Wed / Thu — Legs every day · Chest → Back → Shoulders · Core variations<br>30 min sauna + hot tub post-session</p></div>
+<button class="g-morning-btn" id="gMorningBtn" onclick="toggleMorning()"><span><span class="g-sun">☀</span> Daily Morning Mobility + Breathwork</span><span class="g-arrow">▼</span></button>
+<div class="g-morning-panel" id="gMorningPanel"><div class="g-morning-sub">Every morning. 15-20 min. Non-negotiable.</div>
+<div class="g-phase">Breathwork (5 min)</div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">Box Breathing — 4s in / 4s hold / 4s out / 4s hold × 5 rounds</div></div></div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">Wim Hof round — 30 breaths, hold on exhale, recovery breath. × 2</div></div></div>
+<div class="g-phase">Spine (3 min)</div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">Cat-Cow × 10</div></div></div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">Segmented Spinal Roll — standing, one vertebra at a time</div></div></div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">Thoracic Rotation on Floor × 8 each side</div></div></div>
+<div class="g-phase">Hips (4 min)</div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">90/90 Hip Switches × 10</div></div></div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">Deep Squat Hold — 60s, shift weight side to side</div></div></div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">Couch Stretch — 30s each side</div></div></div>
+<div class="g-phase">Shoulders (3 min)</div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">Band Pull-Aparts × 15</div></div></div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">Wall Slides × 10</div></div></div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">German Hang or Passive Hang — 30s</div></div></div>
+<div class="g-phase">Flow (2 min)</div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">Ground-Up Sequence — lie flat → tactical stand → deep squat → standing</div></div></div>
+<div class="exercise g-morning-ex"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name g-phase-item">Movement improvisation — let the body move how it wants</div></div></div>
+</div>
+<div class="tabs-wrapper"><div class="tabs">
+<button class="tab active" data-day="tue" onclick="switchDay('tue')">Tuesday<span class="tab-sub">Legs: Posterior Chain</span></button>
+<button class="tab" data-day="wed" onclick="switchDay('wed')">Wednesday<span class="tab-sub">Legs: Lateral</span></button>
+<button class="tab" data-day="thu" onclick="switchDay('thu')">Thursday<span class="tab-sub">Legs: Anterior</span></button>
+</div></div>
+<div class="content">
+<div class="day-panel active" id="day-tue" style="--dayc:#E85D3A">
+<div class="g-focus" style="color:#E85D3A;border-bottom:1px solid #E85D3A33">Legs: Posterior Chain + Chest + Core Stability</div>
+<div class="section" id="g-tue-s1">
+<div class="section-header" onclick="toggleSection('g-tue-s1')"><div class="section-icon work" style="background:#E85D3A22;color:#E85D3A">●</div><div class="section-title">Posterior Chain Legs</div><div class="section-chevron">▼</div></div>
+<div class="section-body"><div class="superset simple-list">
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Nordic Curl Negatives</div><div class="exercise-note">Slow 5s eccentric. Beast hamstring builder.</div></div><div class="g-sets">4×5</div></div>
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Single-Leg Glute Bridge (elevated)</div><div class="exercise-note">Foot on bench. Squeeze 2s at top.</div></div><div class="g-sets">3×12 each</div></div>
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Reverse Nordic Lean</div><div class="exercise-note">Quad stretch under load. Go slow.</div></div><div class="g-sets">3×8</div></div>
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Pistol Squat Negatives (5s down)</div><div class="exercise-note">Controlled descent builds deep strength.</div></div><div class="g-sets">3×5 each</div></div>
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Calf Raises (single leg, slow)</div><div class="exercise-note">2s up, 2s hold, 3s down.</div></div><div class="g-sets">3×15 each</div></div>
+</div></div></div>
+<div class="section" id="g-tue-s2">
+<div class="section-header" onclick="toggleSection('g-tue-s2')"><div class="section-icon work" style="background:#E85D3A22;color:#E85D3A">●</div><div class="section-title">Chest</div><div class="section-chevron">▼</div></div>
+<div class="section-body"><div class="superset simple-list">
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Ring Dips</div><div class="exercise-note">Deep. Rings turned out at top.</div></div><div class="g-sets">4×8-10</div></div>
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Pseudo Planche Pushups</div><div class="exercise-note">Hands by hips, lean forward hard.</div></div><div class="g-sets">3×8</div></div>
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Archer Pushups</div><div class="exercise-note">Full extension on the straight arm.</div></div><div class="g-sets">3×6 each</div></div>
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Ring Fly Negatives</div><div class="exercise-note">Slow 5s eccentric. Chest destroyer.</div></div><div class="g-sets">3×5</div></div>
+</div></div></div>
+<div class="section" id="g-tue-s3">
+<div class="section-header" onclick="toggleSection('g-tue-s3')"><div class="section-icon work" style="background:#E85D3A22;color:#E85D3A">●</div><div class="section-title">Core: Anti-Extension</div><div class="section-chevron">▼</div></div>
+<div class="section-body"><div class="superset simple-list">
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Ab Wheel Rollouts</div><div class="exercise-note">Full extension. No sagging.</div></div><div class="g-sets">3×10</div></div>
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Dragon Flag Negatives</div><div class="exercise-note">Straight body, slow lower.</div></div><div class="g-sets">3×5</div></div>
+<div class="exercise" data-day="tue"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Hollow Body Hold</div><div class="exercise-note">Arms overhead. Press lower back flat.</div></div><div class="g-sets">3×30s</div></div>
+</div></div></div>
+</div>
+<div class="day-panel" id="day-wed" style="--dayc:#3A8FE8">
+<div class="g-focus" style="color:#3A8FE8;border-bottom:1px solid #3A8FE833">Legs: Lateral + Explosive + Back + Core Rotation</div>
+<div class="section" id="g-wed-s1">
+<div class="section-header" onclick="toggleSection('g-wed-s1')"><div class="section-icon work" style="background:#3A8FE822;color:#3A8FE8">●</div><div class="section-title">Lateral &amp; Explosive Legs</div><div class="section-chevron">▼</div></div>
+<div class="section-body"><div class="superset simple-list">
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Cossack Squats</div><div class="exercise-note">Full depth. Heel stays planted.</div></div><div class="g-sets">3×8 each</div></div>
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Shrimp Squats</div><div class="exercise-note">Grab back foot. Different motor pattern than pistols.</div></div><div class="g-sets">3×6 each</div></div>
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Box Jump (max height)</div><div class="exercise-note">Step down. Reset between reps.</div></div><div class="g-sets">4×5</div></div>
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Skater Squats</div><div class="exercise-note">Rear foot hovers, don&#x27;t touch down.</div></div><div class="g-sets">3×8 each</div></div>
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Wall Sit (single leg)</div><div class="exercise-note">Isometric endurance. Mental game.</div></div><div class="g-sets">3×20s each</div></div>
+</div></div></div>
+<div class="section" id="g-wed-s2">
+<div class="section-header" onclick="toggleSection('g-wed-s2')"><div class="section-icon work" style="background:#3A8FE822;color:#3A8FE8">●</div><div class="section-title">Back</div><div class="section-chevron">▼</div></div>
+<div class="section-body"><div class="superset simple-list">
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Muscle Up Practice</div><div class="exercise-note">Focus: reducing kip each session.</div></div><div class="g-sets">3×3</div></div>
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Archer Pull-ups</div><div class="exercise-note">Straight arm fully extended.</div></div><div class="g-sets">3×5 each</div></div>
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Front Lever Tuck Holds</div><div class="exercise-note">Progress to advanced tuck when 15s easy.</div></div><div class="g-sets">4×10s</div></div>
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Ring Rows (feet elevated)</div><div class="exercise-note">Slow negative. Squeeze scapula.</div></div><div class="g-sets">3×12</div></div>
+</div></div></div>
+<div class="section" id="g-wed-s3">
+<div class="section-header" onclick="toggleSection('g-wed-s3')"><div class="section-icon work" style="background:#3A8FE822;color:#3A8FE8">●</div><div class="section-title">Core: Anti-Rotation</div><div class="section-chevron">▼</div></div>
+<div class="section-body"><div class="superset simple-list">
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Pallof Press (band)</div><div class="exercise-note">Press and hold 2s. Resist the twist.</div></div><div class="g-sets">3×10 each</div></div>
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Windshield Wipers (hanging)</div><div class="exercise-note">Legs straight if possible.</div></div><div class="g-sets">3×6 each</div></div>
+<div class="exercise" data-day="wed"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Side Plank + Reach Through</div><div class="exercise-note">Thread the needle. Controlled rotation.</div></div><div class="g-sets">3×8 each</div></div>
+</div></div></div>
+</div>
+<div class="day-panel" id="day-thu" style="--dayc:#3AE89E">
+<div class="g-focus" style="color:#3AE89E;border-bottom:1px solid #3AE89E33">Legs: Anterior + Isometric + Shoulders + Core Compression</div>
+<div class="section" id="g-thu-s1">
+<div class="section-header" onclick="toggleSection('g-thu-s1')"><div class="section-icon work" style="background:#3AE89E22;color:#3AE89E">●</div><div class="section-title">Anterior Chain &amp; Isometric Legs</div><div class="section-chevron">▼</div></div>
+<div class="section-body"><div class="superset simple-list">
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Pistol Squats (weighted vest if avail)</div><div class="exercise-note">Full depth. Controlled.</div></div><div class="g-sets">4×6 each</div></div>
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Sissy Squats</div><div class="exercise-note">Lean back, knees forward. Pure quad isolation.</div></div><div class="g-sets">3×10</div></div>
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Step-Up to Knee Drive (high box)</div><div class="exercise-note">Explosive drive. No push off back foot.</div></div><div class="g-sets">3×8 each</div></div>
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Horse Stance Hold</div><div class="exercise-note">Wide, deep, thighs parallel. Breathe.</div></div><div class="g-sets">3×30s</div></div>
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Toes-Elevated Squat Hold</div><div class="exercise-note">Heels on plate/book. Deep quad burn.</div></div><div class="g-sets">3×20s</div></div>
+</div></div></div>
+<div class="section" id="g-thu-s2">
+<div class="section-header" onclick="toggleSection('g-thu-s2')"><div class="section-icon work" style="background:#3AE89E22;color:#3AE89E">●</div><div class="section-title">Shoulders</div><div class="section-chevron">▼</div></div>
+<div class="section-body"><div class="superset simple-list">
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Pike Pushups (feet elevated)</div><div class="exercise-note">Head touches floor. Progressing to HSPU.</div></div><div class="g-sets">4×8</div></div>
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Ring Face Pulls</div><div class="exercise-note">Rear delts. External rotation at top.</div></div><div class="g-sets">3×12</div></div>
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Wall HSPU Negatives</div><div class="exercise-note">5s down. Build pressing strength inverted.</div></div><div class="g-sets">3×4</div></div>
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Lateral Raise (band or hold weight)</div><div class="exercise-note">Control the negative.</div></div><div class="g-sets">3×12</div></div>
+</div></div></div>
+<div class="section" id="g-thu-s3">
+<div class="section-header" onclick="toggleSection('g-thu-s3')"><div class="section-icon work" style="background:#3AE89E22;color:#3AE89E">●</div><div class="section-title">Core: Compression &amp; Hip Flexor</div><div class="section-chevron">▼</div></div>
+<div class="section-body"><div class="superset simple-list">
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">L-Sit Hold (parallettes or bars)</div><div class="exercise-note">Locked legs. Press hard.</div></div><div class="g-sets">4×15s</div></div>
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">Hanging Leg Raises (toes to bar)</div><div class="exercise-note">No swing. Slow lower.</div></div><div class="g-sets">3×10</div></div>
+<div class="exercise" data-day="thu"><div class="exercise-check" onclick="toggleCheck(event)"></div><div class="exercise-info"><div class="exercise-name">V-Up to Tuck</div><div class="exercise-note">Explosive V, controlled tuck down.</div></div><div class="g-sets">3×12</div></div>
+</div></div></div>
+</div>
+</div>
+<div class="g-sauna"><div class="g-sauna-title">Post-Workout: 30 min Sauna + Hot Tub</div><div class="g-sauna-note">Cold plunge between rounds if available. Parasympathetic recovery. Let the nervous system reset.</div></div>
+<div class="g-bjj"><div class="g-bjj-title">Future: BJJ Integration</div><div class="g-bjj-note">Monday &amp; Friday 5 AM — when you add these, pull back Thursday volume slightly. BJJ will cover grip, neck, and scramble conditioning. Tuesday becomes your heaviest training day with full rest before Friday rolling.</div></div>
+<div class="g-philosophy"><strong>Philosophy:</strong> Strength and skill first. Hypertrophy follows movement mastery. Every session builds body control — the muscle is the side effect.</div>
+</div>
+</div>
+
+<div class="lightning-overlay" id="lightningOverlay" onclick="dismissLightning()">
+  <svg class="bolt-svg b1" viewBox="0 0 1000 600" preserveAspectRatio="none"><polyline points="620,0 540,140 590,150 430,340 500,350 330,600"/></svg>
+  <svg class="bolt-svg b2" viewBox="0 0 1000 600" preserveAspectRatio="none"><polyline points="180,0 240,110 200,125 330,300 270,315 400,520"/></svg>
+  <svg class="bolt-svg b3" viewBox="0 0 1000 600" preserveAspectRatio="none"><polyline points="850,0 790,90 830,105 720,260 770,275 660,470"/></svg>
+  <div class="complete-text">COMPLETE</div>
+</div>
+
 <!-- PROGRESS BAR -->
 <div class="progress-bar-wrapper">
   <div class="progress-inner">
@@ -720,16 +917,32 @@
 </div>
 
 <script>
-  let currentDay = 'a';
-  let celebrated = { a: false, b: false, c: false };
+
+  let currentPerson = 'alivia';
+  let currentDayByPerson = { alivia: 'a', gabriel: 'tue' };
+  let celebrated = {};
+
+  function currentDay() { return currentDayByPerson[currentPerson]; }
+  function activePanel() { return document.getElementById('day-' + currentDay()); }
+  function personEl() { return document.getElementById('person-' + currentPerson); }
+
+  function switchPerson(p) {
+    currentPerson = p;
+    document.body.dataset.person = p;
+    document.querySelectorAll('.person-panel').forEach(pn => pn.classList.toggle('active', pn.id === 'person-' + p));
+    document.querySelectorAll('.person-btn').forEach(b => b.classList.toggle('active', b.dataset.p === p));
+    switchDay(currentDayByPerson[p]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   function switchDay(day) {
-    currentDay = day;
-    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.day === day));
-    document.querySelectorAll('.day-panel').forEach(p => p.classList.toggle('active', p.id === 'day-' + day));
-    // Recalc section heights after panel is visible
+    currentDayByPerson[currentPerson] = day;
+    const scope = personEl();
+    scope.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.day === day));
+    scope.querySelectorAll('.day-panel').forEach(p => p.classList.toggle('active', p.id === 'day-' + day));
     requestAnimationFrame(() => {
-      const panel = document.getElementById('day-' + day);
+      const panel = activePanel();
+      if (!panel) return;
       panel.querySelectorAll('.section-body').forEach(body => {
         if (!body.closest('.section').classList.contains('collapsed')) {
           body.style.maxHeight = body.scrollHeight + 'px';
@@ -754,6 +967,11 @@
     }
   }
 
+  function toggleMorning() {
+    document.getElementById('gMorningBtn').classList.toggle('open');
+    document.getElementById('gMorningPanel').classList.toggle('show');
+  }
+
   function toggleCheck(e) {
     e.stopPropagation();
     e.preventDefault();
@@ -765,30 +983,44 @@
   }
 
   function updateProgress() {
-    const panel = document.getElementById('day-' + currentDay);
+    const panel = activePanel();
+    if (!panel) return;
     const total = panel.querySelectorAll('.exercise-check').length;
     const done = panel.querySelectorAll('.exercise-check.done').length;
     const pct = total ? Math.round((done / total) * 100) : 0;
     document.getElementById('progressFill').style.width = pct + '%';
     document.getElementById('progressText').textContent = pct + '%';
-
-    if (pct === 100 && !celebrated[currentDay]) {
-      celebrated[currentDay] = true;
-      launchParty();
+    const key = currentPerson + '-' + currentDay();
+    if (pct === 100 && !celebrated[key]) {
+      celebrated[key] = true;
+      if (currentPerson === 'gabriel') { launchLightning(); } else { launchParty(); }
     }
-    if (pct < 100) {
-      celebrated[currentDay] = false;
-    }
+    if (pct < 100) { celebrated[key] = false; }
   }
 
   function resetDay() {
-    const panel = document.getElementById('day-' + currentDay);
+    const panel = activePanel();
     panel.querySelectorAll('.exercise-check.done').forEach(c => {
       c.classList.remove('done');
       c.closest('.exercise').classList.remove('completed');
     });
-    celebrated[currentDay] = false;
+    celebrated[currentPerson + '-' + currentDay()] = false;
     updateProgress();
+  }
+
+  /* ====== LIGHTNING EFFECT (Gabriel) ====== */
+  let lightningTimer = null;
+  function launchLightning() {
+    const ov = document.getElementById('lightningOverlay');
+    ov.classList.remove('show');
+    void ov.offsetWidth;
+    ov.classList.add('show');
+    clearTimeout(lightningTimer);
+    lightningTimer = setTimeout(() => ov.classList.remove('show'), 3900);
+  }
+  function dismissLightning() {
+    document.getElementById('lightningOverlay').classList.remove('show');
+    clearTimeout(lightningTimer);
   }
 
   /* ====== PARTY EFFECT ====== */
@@ -839,11 +1071,11 @@
     setTimeout(() => container.remove(), 5000);
   }
 
-  // Init section heights for Day A on load
   document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('day-a').querySelectorAll('.section-body').forEach(body => {
       body.style.maxHeight = body.scrollHeight + 'px';
     });
+    updateProgress();
   });
 </script>
 
