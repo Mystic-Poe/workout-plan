@@ -257,6 +257,27 @@
     margin-top: 3px;
   }
 
+  /* --- SET TICKS --- */
+  .set-ticks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+  .set-tick {
+    min-width: 27px; height: 24px; padding: 0 6px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: transparent;
+    color: var(--text-soft);
+    font-size: 11.5px; font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .set-tick:hover { border-color: var(--accent); }
+  .set-tick.done { background: var(--success); border-color: var(--success); color: #fff; }
+  #person-gabriel .set-tick { border-color: #333; }
+  #person-gabriel .set-tick.done { background: var(--success); border-color: var(--success); }
+  .exercise.partial .exercise-check { border-color: var(--success); border-style: dashed; }
+
   /* --- SIMPLE LIST (warmup/cooldown) --- */
   .simple-list .exercise {
     padding: 6px 0;
@@ -972,14 +993,76 @@
     document.getElementById('gMorningPanel').classList.toggle('show');
   }
 
+  function setCountFor(exercise) {
+    const g = exercise.querySelector('.g-sets');
+    if (g) { const m = g.textContent.trim().match(/^(\d+)\s*\u00d7/); if (m) return parseInt(m[1], 10); }
+    const d = exercise.querySelector('.exercise-detail');
+    if (d) {
+      const t = d.textContent;
+      let m = t.match(/^(\d+)\s*\u00d7/);
+      if (m) return parseInt(m[1], 10);
+      m = t.match(/\u00d7\s*(\d+)\s*(?:$|rounds?\b)/i);
+      if (m) return parseInt(m[1], 10);
+    }
+    return 1;
+  }
+
+  function refreshExercise(exercise) {
+    const ticks = exercise.querySelectorAll('.set-tick');
+    if (!ticks.length) return;
+    const check = exercise.querySelector('.exercise-check');
+    const done = exercise.querySelectorAll('.set-tick.done').length;
+    const all = done === ticks.length;
+    exercise.classList.toggle('completed', all);
+    exercise.classList.toggle('partial', done > 0 && !all);
+    check.classList.toggle('done', all);
+  }
+
+  function toggleSet(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    const tick = e.currentTarget;
+    tick.classList.toggle('done');
+    refreshExercise(tick.closest('.exercise'));
+    updateProgress();
+  }
+
   function toggleCheck(e) {
     e.stopPropagation();
     e.preventDefault();
     const check = e.currentTarget;
     const exercise = check.closest('.exercise');
-    check.classList.toggle('done');
-    exercise.classList.toggle('completed');
+    const ticks = exercise.querySelectorAll('.set-tick');
+    if (ticks.length) {
+      const allDone = exercise.querySelectorAll('.set-tick.done').length === ticks.length;
+      ticks.forEach(t => t.classList.toggle('done', !allDone));
+      refreshExercise(exercise);
+    } else {
+      check.classList.toggle('done');
+      exercise.classList.toggle('completed');
+    }
     updateProgress();
+  }
+
+  function buildSetTicks() {
+    document.querySelectorAll('.exercise').forEach(exercise => {
+      const n = setCountFor(exercise);
+      if (n < 2) return;
+      const info = exercise.querySelector('.exercise-info');
+      if (!info || info.querySelector('.set-ticks')) return;
+      const row = document.createElement('div');
+      row.className = 'set-ticks';
+      for (let i = 1; i <= n; i++) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'set-tick';
+        b.textContent = i;
+        b.setAttribute('aria-label', 'Set ' + i);
+        b.addEventListener('click', toggleSet);
+        row.appendChild(b);
+      }
+      info.appendChild(row);
+    });
   }
 
   function updateProgress() {
@@ -1000,10 +1083,9 @@
 
   function resetDay() {
     const panel = activePanel();
-    panel.querySelectorAll('.exercise-check.done').forEach(c => {
-      c.classList.remove('done');
-      c.closest('.exercise').classList.remove('completed');
-    });
+    panel.querySelectorAll('.exercise-check.done').forEach(c => c.classList.remove('done'));
+    panel.querySelectorAll('.set-tick.done').forEach(t => t.classList.remove('done'));
+    panel.querySelectorAll('.exercise.completed, .exercise.partial').forEach(x => x.classList.remove('completed', 'partial'));
     celebrated[currentPerson + '-' + currentDay()] = false;
     updateProgress();
   }
@@ -1072,6 +1154,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    buildSetTicks();
     document.getElementById('day-a').querySelectorAll('.section-body').forEach(body => {
       body.style.maxHeight = body.scrollHeight + 'px';
     });
